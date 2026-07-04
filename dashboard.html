@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Security Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+    <div class="navbar">
+    <a href="/">🏠 Home</a>
+    <a href="/upload">📤 Upload</a>
+    <a href="/dashboard">📊 Dashboard</a>
+</div>
+
+<h1>🛡️ Automated Security Reporting Dashboard</h1>
+<p>Monitor and analyze uploaded security reports in real time.</p>
+<p id="datetime"></p>
+
+<div class="card total ">
+    <h2>🔵Total Alerts</h2>
+    <h3>{{ total_alerts }}</h3>
+</div>
+
+<div class="card critical">
+    <h2>🔴 Critical</h2>
+    <h3>{{ critical }}</h3>
+</div>
+
+<div class="card high">
+    <h2>🟠 High</h2>
+    <h3>{{ high }}</h3>
+</div>
+
+<div class="card medium">
+    <h2>🟡 Medium</h2>
+    <h3>{{ medium }}</h3>
+</div>
+
+<div class="card low">
+    <h2>🟢 Low</h2>
+    <h3>{{ low }}</h3>
+</div>
+
+<br><br>
+
+<a href="/upload">
+    <button>📤 Upload Security Report</button>
+</a>
+
+<a href="/dashboard">
+    <button>🔄 Refresh Dashboard</button>
+</a>
+
+<br><br>
+
+<h2 style="text-align:center;">Security Logs</h2>
+
+<p style="text-align:center;">Total Records: {{ total_alerts }}</p>
+
+<input type="text" id="searchInput" placeholder="Search Alerts..." onkeyup="searchTable()">
+
+<br><br>
+
+<table border="1" cellpadding="10" style="margin:auto; border-collapse:collapse;">
+    <tr>
+        <th>Alert</th>
+        <th>Severity</th>
+    </tr>
+
+    {% for log in logs %}
+    <tr>
+        <td>{{ log["Alert"] }}</td>
+        <td>{{ log["Severity"] }}</td>
+    </tr>
+    {% endfor %}
+</table>
+
+<br><br>
+
+<h2>Alert Summary Chart</h2>
+<canvas id="alertChart" width="600" height="300"></canvas>
+
+<br><br>
+
+<h2>Alert Distribution</h2>
+<canvas id="pieChart" width="400" height="300"></canvas>
+
+<hr>
+
+<footer>
+    <p>© 2026 Automated Security Reporting Dashboard | Created by Antara Hire</p>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+const ctx = document.getElementById('alertChart');
+
+new Chart(ctx, {
+    type: 'bar',
+    data: {
+        labels: ['Critical', 'High', 'Medium', 'Low'],
+        datasets: [{
+            label:'Number Of Alerts',
+            data: [{{ critical }}, {{ high }}, {{ medium }}, {{ low }}],
+            backgroundColor: [
+                '#dc3545',
+                '#fd7e14',
+                '#ffc107',
+                '#28a745'
+            ],
+            borderColor: [
+                '#dc3545',
+                '#fd7e14',
+                '#ffc107',
+                '#28a745'
+            ],
+            borderWidth: 1
+        }]
+    },
+    options: {
+    responsive: true,
+    plugins: {
+        legend: {
+            display: false
+        }
+    },
+        scales: {
+            y: {
+                beginAtZero: true
+            }
+        }
+    }
+});
+
+const pie = document.getElementById('pieChart');
+
+new Chart(pie, {
+    type: 'pie',
+    data: {
+        labels: ['Critical', 'High', 'Medium', 'Low'],
+        datasets: [{
+            data: [{{ critical }}, {{ high }}, {{ medium }}, {{ low }}],
+            backgroundColor: [
+                '#dc3545',
+                '#fd7e14',
+                '#ffc107',
+                '#28a745'
+            ],
+            borderColor: '#ffffff',
+            borderWidth: 2
+        }]
+    },
+    options: {
+        responsive: true
+    }
+});
+
+function showDateTime() {
+    const now = new Date();
+    document.getElementById("datetime").innerHTML =
+        "Date & Time: " + now.toLocaleString();
+}
+
+showDateTime();
+setInterval(showDateTime, 1000);
+
+function searchTable() {
+    let input = document.getElementById("searchInput");
+    let filter = input.value.toUpperCase();
+    let table = document.querySelector("table");
+    let tr = table.getElementsByTagName("tr");
+
+    for (let i = 1; i < tr.length; i++) {
+        let td = tr[i].getElementsByTagName("td")[0];
+
+        if (td) {
+            let text = td.textContent || td.innerText;
+
+            tr[i].style.display = text.toUpperCase().indexOf(filter) > -1 ? "" : "none";
+        }
+    }
+}
+</script>
+</body>
+</html>
