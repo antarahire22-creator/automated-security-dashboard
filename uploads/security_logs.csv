@@ -1,0 +1,16 @@
+Alert,Severity
+SQL Injection,Critical
+Malware Detected,High
+Failed Login,Medium
+Port Scan,Low
+Ransomware,Critical
+Phishing Email,High
+Unauthorized Access,Critical
+Weak Password,Medium
+Brute Force Attack,High
+Suspicious Login,Low
+Firewall Alert,Medium
+Data Leak,Critical
+VPN Failure,Low
+XSS Attack,High
+Account Lockout,Medium
